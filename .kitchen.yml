@@ -5,7 +5,9 @@ driver:
 
 provisioner:
   name: chef_zero
-  require_chef_omnibus: 12
+  #  require_chef_omnibus: 14
+  product_name: chef
+  product_version: 14
 
 verifier:
   name: inspec
@@ -16,25 +18,28 @@ verifier:
   format: cli
   <% end %>
 
+transport:
+    name: speedy_ssh
+
 platforms:
-  - name: ubuntu-14.04
-    driver:
-      box: asy/trusty64-lxc
-      provider: lxc
-    run_list:
-      - recipe[apt]
+  #  - name: ubuntu-14.04
+  #    driver:
+  #      box: asy/trusty64-lxc
+  #      provider: lxc
+  #    run_list:
+  #      - recipe[apt]
   - name: ubuntu-16.04
     driver:
       box: asy/xenial64-lxc
       provider: lxc
     run_list:
       - recipe[apt]
-  # - name: centos-6.x
-  #   driver:
-  #     box: asy/centos-6-64-lxc
-  #     provider: lxc
-  #   run_list:
-  #     - recipe[yum]
+  - name: ubuntu-18.04
+    driver:
+      box: asy/bionic64-lxc
+      provider: lxc
+    run_list:
+      - recipe[apt]
   - name: centos-7.x
     driver:
       box: asy/centos-7-64-lxc
@@ -54,6 +59,28 @@ suites:
 - name: default
   run_list:
     - recipe[monitor::master]
+  attributes:
+    apt:
+     compile_time_update: true
+    authorization:
+      sudo:
+        users: ["vagrant", "kitchen"]
+        passwordless: true
+        include_sudoers_d: true
+    monitor:
+      use_nagios_plugins: false
+      use_system_profile: true
+      use_statsd_input: true
+    # rabbitmq:
+    #   use_distro_version: true
+  excludes:
+    - windows-2012r2
+- name: default-chef12
+  run_list:
+    - recipe[monitor::master]
+  provisioner:
+    product_name: chef
+    product_version: 12
   attributes:
     apt:
      compile_time_update: true
@@ -91,9 +118,53 @@ suites:
     #   use_distro_version: true
   excludes:
     - windows-2012r2
+- name: server-chef12-redis
+  run_list:
+    - recipe[monitor::master]
+  provisioner:
+    product_name: chef
+    product_version: 12
+  attributes:
+    apt:
+     compile_time_update: true
+    authorization:
+      sudo:
+        users: ["vagrant", "kitchen"]
+        passwordless: true
+        include_sudoers_d: true
+    monitor:
+      use_nagios_plugins: false
+      use_system_profile: true
+      use_statsd_input: true
+      transport: redis
+      redis_db: 1
+    # rabbitmq:
+    #   use_distro_version: true
+  excludes:
+    - windows-2012r2
 - name: client
   run_list:
     - recipe[monitor::client]
+  attributes:
+    apt:
+     compile_time_update: true
+    authorization:
+      sudo:
+        users: ["vagrant", "kitchen"]
+        passwordless: true
+        include_sudoers_d: true
+    monitor:
+      use_nagios_plugins: false
+      use_system_profile: true
+      use_statsd_input: true
+  excludes:
+    - windows-2012r2
+- name: client-chef12
+  run_list:
+    - recipe[monitor::client]
+  provisioner:
+    product_name: chef
+    product_version: 12
   attributes:
     apt:
      compile_time_update: true
@@ -125,9 +196,49 @@ suites:
       use_statsd_input: true
   includes:
     - windows-2012r2
+- name: windows-client-chef12
+  run_list:
+    - recipe[monitor::client]
+  provisioner:
+    product_name: chef
+    product_version: 12
+  attributes:
+    apt:
+     compile_time_update: true
+    authorization:
+      sudo:
+        users: ["vagrant", "kitchen"]
+        passwordless: true
+        include_sudoers_d: true
+    monitor:
+      use_nagios_plugins: false
+      use_system_profile: true
+      use_statsd_input: true
+  includes:
+    - windows-2012r2
 - name: client-redis
   run_list:
     - recipe[monitor::client]
+  attributes:
+    apt:
+     compile_time_update: true
+    authorization:
+      sudo:
+        users: ["vagrant", "kitchen"]
+        passwordless: true
+        include_sudoers_d: true
+    monitor:
+      use_nagios_plugins: false
+      use_system_profile: true
+      use_statsd_input: true
+      transport: redis
+  excludes:
+    - windows-2012r2
+- name: client-redis-chef12
+  run_list:
+    - recipe[monitor::client]
+  provisioner:
+    require_chef_omnibus: 12
   attributes:
     apt:
      compile_time_update: true

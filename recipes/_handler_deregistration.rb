@@ -17,7 +17,9 @@
 # limitations under the License.
 #
 
-include_recipe 'build-essential::default' unless node['os'] == 'windows'
+build_essential 'build_essential' do
+  not_if { node['os'] == 'windows' }
+end
 
 include_recipe 'monitor::_filters'
 
@@ -30,4 +32,4 @@ sensu_handler 'deregistration' do
   )
 end
 
-node.set['monitor']['active_handlers']['deregister'] = true
+node.default['monitor']['active_handlers']['deregister'] = true

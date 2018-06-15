@@ -143,6 +143,7 @@ timestamps {
               script: 'kitchen list -b',
               returnStdout: true
               ).trim()
+            echo "DEBUG: kitchen list " + platforms
             platformslist = platforms.split("\n")
 
             for(int i = 0; i < platformslist.size(); i++) {

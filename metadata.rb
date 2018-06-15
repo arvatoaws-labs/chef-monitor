@@ -4,8 +4,9 @@ maintainer_email 'phil@hellmi.de'
 license 'Apache-2.0'
 description 'A cookbook for monitoring services, using Sensu, a monitoring framework.'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version '0.9.12'
-chef_version '~> 12'
+version '0.10.0'
+chef_version '>= 12'
+
 
 issues_url 'https://github.com/runningman84/chef-monitor/issues'
 source_url 'https://github.com/runningman84/chef-monitor'
@@ -22,11 +23,11 @@ source_url 'https://github.com/runningman84/chef-monitor'
   supports os
 end
 
-depends 'apt', '~> 6.1.0'
+depends 'apt'
 depends 'sudo'
 depends 'yum-epel'
 depends 'zypper'
 depends 'build-essential'
 depends 'sensu'
 depends 'uchiwa'
-depends 'zap'
+depends 'zap', '>= 1.0.0'
