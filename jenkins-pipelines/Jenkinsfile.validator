@@ -66,30 +66,32 @@ pipeline {
       }
       steps {
         script {
-          withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'Abteilungsaccount']]) {
-            sh '''
-              ln -s .kitchen.aws.yml .kitchen.local.yml
-            '''
+          sshagent (credentials: ['ggcsjen01aws']) {
+            withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'Abteilungsaccount']]) {
+              sh '''
+                ln -s .kitchen.aws.yml .kitchen.local.yml
+              '''
 
-            def platforms = sh(
-              script: 'kitchen list -b',
-              returnStdout: true
-              ).trim()
-            platformslist = platforms.split('\n')
+              def platforms = sh(
+                script: 'kitchen list -b',
+                returnStdout: true
+                ).trim()
+              platformslist = platforms.split('\n')
 
-            // Run kitchen test for each line of result
-            for(int i = 0; i < platformslist.size(); i++) {
-              sh 'kitchen converge --color --no-log-overwrite --log-level info ' + platformslist[i]
-            }
-            for(int i = 0; i < platformslist.size(); i++) {
-              sh 'kitchen verify --color --no-log-overwrite --log-level info ' + platformslist[i]
-            }
-            for(int i =0; i < platformslist.size(); i++) {
-              sh 'kitchen destroy --color --no-log-overwrite --log-level info ' + platformslist[i]
-            }
+              // Run kitchen test for each line of result
+              for(int i = 0; i < platformslist.size(); i++) {
+                sh 'kitchen converge --color --no-log-overwrite --log-level info ' + platformslist[i]
+              }
+              for(int i = 0; i < platformslist.size(); i++) {
+                sh 'kitchen verify --color --no-log-overwrite --log-level info ' + platformslist[i]
+              }
+              for(int i =0; i < platformslist.size(); i++) {
+                sh 'kitchen destroy --color --no-log-overwrite --log-level info ' + platformslist[i]
+              }
 
-            // Archive kitchen logs & reports
-            archiveArtifacts('.kitchen/logs/*')
+              // Archive kitchen logs & reports
+              archiveArtifacts('.kitchen/logs/*')
+            }
           }
         }
       }
