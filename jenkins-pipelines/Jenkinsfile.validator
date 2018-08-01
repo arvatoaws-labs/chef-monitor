@@ -64,11 +64,10 @@ pipeline {
       environment {
         KITCHEN_EC2_SSH_KEY_ID = 'ggcsjen01aws'
         USER = 'ggcsjen01'
-        KITCHEN_EC2_SSH_KEY_FILE = 'ggcsjen01aws'
       }
       steps {
         script {
-          sshagent (credentials: ['ggcsjen01aws'], keyFileVariable: ENV.KITCHEN_EC2_SSH_KEY_FILE) {
+          sshagent (credentials: ['ggcsjen01aws'], keyFileVariable: env.KITCHEN_EC2_SSH_KEY_FILE) {
             withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'Abteilungsaccount']]) {
               sh '''
                 echo "use kitchen-aws"
