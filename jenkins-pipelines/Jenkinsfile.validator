@@ -61,6 +61,9 @@ pipeline {
       }
     }
     stage ('Kitchen tests (converge/verify/destroy)') {
+      environment {
+        KITCHEN_EC2_SSH_KEY_ID = 'ggcsjen01aws'
+      }
       steps {
         script {
           withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'Abteilungsaccount']]) {
