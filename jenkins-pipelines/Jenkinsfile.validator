@@ -70,7 +70,7 @@ pipeline {
         script {
           sshagent (credentials: ['ggcsjen01aws']) {
             withCredentials([
-                []$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'Abteilungsaccount'],
+                [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'Abteilungsaccount'],
                 sshUserPrivateKey(credentialsId: 'ggcsjen01aws', keyFileVariable: 'RSA_KEY')
               ]) {
               sh '''
