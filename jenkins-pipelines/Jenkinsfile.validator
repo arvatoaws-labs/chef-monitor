@@ -69,43 +69,34 @@ pipeline {
       steps {
         script {
           sshagent (credentials: ['ggcsjen01-ssh']) {
-            withCredentials([
-                [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'Abteilungsaccount'],
-                sshUserPrivateKey(credentialsId: 'ggcsjen01-ssh', keyFileVariable: 'ssh_path' )
-              ]) {
-                  withEnv(["KITCHEN_EC2_SSH_KEY_FILE=$ssh_path"]) {
-                    sh '''
-                      echo "use kitchen-aws"
-                      ln -s .kitchen.aws.yml .kitchen.local.yml
+            withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'Abteilungsaccount']]) {
+              sh '''
+                ln -s .kitchen.aws.yml .kitchen.local.yml
+              '''
+              def platforms = sh(
+                script: 'kitchen list -b',
+                returnStdout: true
+                ).trim()
+              platformslist = platforms.split('\n')
 
-                    '''
-
-                    def platforms = sh(
-                      script: 'kitchen list -b',
-                      returnStdout: true
-                      ).trim()
-                    platformslist = platforms.split('\n')
-
-                    // Run kitchen test for each line of result
-                    for(int i = 0; i < platformslist.size(); i++) {
-                      sh 'kitchen converge --color --no-log-overwrite --log-level info ' + platformslist[i]
-                    }
-                    for(int i = 0; i < platformslist.size(); i++) {
-                      sh 'kitchen verify --color --no-log-overwrite --log-level info ' + platformslist[i]
-                    }
-                    for(int i =0; i < platformslist.size(); i++) {
-                      sh 'kitchen destroy --color --no-log-overwrite --log-level info ' + platformslist[i]
-                    }
-
-                    // Archive kitchen logs & reports
-                    archiveArtifacts('.kitchen/logs/*')
-                  }
-                }
+              // Run kitchen test for each line of result
+              for(int i = 0; i < platformslist.size(); i++) {
+                sh 'kitchen converge --color --no-log-overwrite --log-level info ' + platformslist[i]
               }
+              for(int i = 0; i < platformslist.size(); i++) {
+                sh 'kitchen verify --color --no-log-overwrite --log-level info ' + platformslist[i]
+              }
+              for(int i =0; i < platformslist.size(); i++) {
+                sh 'kitchen destroy --color --no-log-overwrite --log-level info ' + platformslist[i]
+              }
+
+              // Archive kitchen logs & reports
+              archiveArtifacts('.kitchen/logs/*')
+            }
+          }
         }
       }
     }
-
     stage ('Bump version') {
       steps {
         sshagent (credentials: ['11da26ae-bf5e-4c18-b744-b8056d1559b4']) {

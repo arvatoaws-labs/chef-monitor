@@ -45,7 +45,7 @@ verifier:
   <% end %>
 
 transport:
-  ssh_key: <%= "#{ENV['HOME']}/.ssh/#{ENV.fetch('KITCHEN_EC2_SSH_KEY_FILE', "#{ENV.fetch('USER', '')}aws")}" %>
+  # ssh_key: <%= "#{ENV['HOME']}/.ssh/#{ENV.fetch('KITCHEN_EC2_SSH_KEY_FILE', "#{ENV.fetch('USER', '')}aws")}" %>
   connection_timeout: 10
   connection_retries: 5
   name: speedy_ssh
