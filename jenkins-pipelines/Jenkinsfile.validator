@@ -69,6 +69,7 @@ pipeline {
           sshagent (credentials: ['ggcsjen01aws']) {
             withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'Abteilungsaccount']]) {
               sh '''
+                echo "use kitchen-aws"
                 ln -s .kitchen.aws.yml .kitchen.local.yml
               '''
 
