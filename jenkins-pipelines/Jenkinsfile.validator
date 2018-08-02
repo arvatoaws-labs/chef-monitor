@@ -64,7 +64,7 @@ pipeline {
       environment {
         KITCHEN_EC2_SSH_KEY_ID = 'ggcsjen01aws'
         USER = 'ggcsjen01'
-        KITCHEN_EC2_SSH_KEY_FILE = 'ggcsjen01aws'
+        // KITCHEN_EC2_SSH_KEY_FILE = 'ggcsjen01aws'
       }
       steps {
         script {
