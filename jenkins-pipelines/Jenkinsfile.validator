@@ -81,7 +81,7 @@ pipeline {
 
               // Run kitchen test for each line of result
               for(int i = 0; i < platformslist.size(); i++) {
-                sh 'kitchen converge --color --no-log-overwrite --log-level info ' + platformslist[i]
+                sh 'kitchen converge --color --no-log-overwrite --log-level debug ' + platformslist[i]
               }
               for(int i = 0; i < platformslist.size(); i++) {
                 sh 'kitchen verify --color --no-log-overwrite --log-level info ' + platformslist[i]
